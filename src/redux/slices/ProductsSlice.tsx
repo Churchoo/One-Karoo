@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { NetworkState } from '../../constants/networkState';
 import { getProducts } from '../../api/ProductAPI';
 
-export const fetchProducts = createAsyncThunk('accounts/getAccounts', async () => {
+export const fetchProducts = createAsyncThunk('product/getProducts', async () => {
     try {
         const res = await getProducts()
         return res
@@ -19,11 +19,12 @@ interface productsSliceInterface {
         isDeletingProduct: NetworkState,
     }
     errors: {
+        products: string | undefined,
         isUpdatingProductInfo: string | undefined,
         isAddingNewProduct: string | undefined,
         isDeletingProduct: string | undefined,
     },
-    products: [],
+    products: {id: number, productName: string, productDescription: string, productPrice: number }[],
     AccountId: string,
 }
 
@@ -35,6 +36,7 @@ const initialState: productsSliceInterface = {
         isDeletingProduct: NetworkState.NOT_STARTED,
     },
     errors: {
+        products: '',
         isUpdatingProductInfo: '',
         isAddingNewProduct: '',
         isDeletingProduct: '',
@@ -50,7 +52,19 @@ const productsSlice = createSlice({
 
   },
   extraReducers: (builder) => {
-    
+    builder
+        .addCase(fetchProducts.pending, (state) => {
+            state.productsNetworkStatus.products = NetworkState.PENDING
+        })
+        .addCase(fetchProducts.fulfilled, (state, action) =>{
+            state.productsNetworkStatus.products = NetworkState.SUCCESS
+            state.products = action?.payload
+        })
+        .addCase(fetchProducts.rejected, (state, action) =>{
+            state.productsNetworkStatus.products = NetworkState.ERROR
+            state.errors.products = action?.error?.message
+            
+        })
   },
 });
 
