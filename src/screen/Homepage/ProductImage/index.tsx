@@ -11,8 +11,9 @@ interface Props {
 
 const styles = {
     media: {
-        height: 194,
-        paddingTop: '2.50%', // 16:9,
+        height: 210,
+        width: 210,
+        paddingTop: '5.00%', // 16:9,
         paddingLeft: '5.00%',
         paddingRight: '5.00%',
         marginTop: '30'
@@ -20,17 +21,23 @@ const styles = {
 };
 
 const ProductImage = (props: Props) => {
+    const Capitalize =(string:string) =>{
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
     return (
-        <Card sx={{ maxWidth: 345 }}>
+        <Card sx={{ width: 240, height: 350 }} >
+            <Typography variant="h4" color="text.secondary">
+                &nbsp;{Capitalize(props.productName)}
+            </Typography>
             <CardMedia
                 component="img"
-                src={props.ProductImage}
+                src={Capitalize(props.ProductImage)}
                 alt={props.productName}
                 style={styles.media}
             />
             <CardContent>
                 <Typography variant="body2" color="text.secondary">
-                    {props.productDescription}
+                    {Capitalize(props.productDescription)}
                 </Typography>
             </CardContent>
         </Card>

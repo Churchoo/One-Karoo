@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks'
 import { NetworkState } from '../../constants/networkState'
 import { fetchProducts } from '../../redux/slices/ProductsSlice'
-import { Box, Card, CardContent, CardMedia, Grid, Typography } from '@mui/material'
+import { Box, Button, Card, CardContent, CardMedia, Grid, Typography } from '@mui/material'
 import Image1 from '../../images/Image1.jpg'
 import Image2 from '../../images/Image2.jpg'
 import Image3 from '../../images/Image3.jpg'
@@ -50,18 +50,71 @@ const Homepage = (props: Props) => {
   console.log(products.length)
   if (productsNetworkStatus.products === NetworkState.SUCCESS) {
     return (
-      <div>
-          <Grid container spacing={{ xs: 4, md: 4 }} columns={{ xs: 6, sm: 8, md: 12 }} >
-            {products.map((value, index) => (
-              <ProductImage
-                productId={value.id}
-                productName={value.productName}
-                productDescription={value.productDescription}
-                productPrice={value.productPrice}
-                ProductImage={images[index].image}
-              />
-            ))}
-          </Grid>
+      <div style={{ paddingLeft: "2.00%", paddingTop: "2.00%" }}>
+        <Grid container spacing={{ xs: 4, md: 4 }} columns={{ xs: 6, sm: 8, md: 12 }} >
+          <Typography variant="h3" color="text.secondary">
+            ONE KAROO
+          </Typography>
+          <Button variant="text" sx={{ color: "black", fontSize: "20px"}}>Catagories</Button>
+          <Button variant="text" sx={{ color: "black", fontSize: "20px"}}>Gifts packeges</Button>
+          <Button variant="text" sx={{ color: "black", fontSize: "20px"}}>About Us</Button>
+          <Button variant="text" sx={{ color: "black", fontSize: "20px"}}>Contact Us</Button>
+          <Button variant="text" sx={{ color: "black", fontSize: "20px"}}>Shopping Cart</Button>
+        </Grid>
+        <br />
+        <br />
+        <Typography variant="h3" color="text.secondary">
+            Specials
+        </Typography>
+        <br />
+        <br />
+        <Grid container spacing={{ xs: 4, md: 4 }} columns={{ xs: 6, sm: 8, md: 12 }} >
+          {products.map((value, index) => (
+            <ProductImage
+              productId={value.id}
+              productName={value.productName}
+              productDescription={value.productDescription}
+              productPrice={value.productPrice}
+              ProductImage={images[index].image}
+            />
+          ))}
+        </Grid>
+        <br />
+        <br />
+        <Typography variant="h3" color="text.secondary">
+            Premade Gift Boxes
+        </Typography>
+        <br />
+        <br />
+        <Grid container spacing={{ xs: 4, md: 4 }} columns={{ xs: 6, sm: 8, md: 12 }} >
+          {products.map((value, index) => (
+            <ProductImage
+              productId={value.id}
+              productName={value.productName}
+              productDescription={value.productDescription}
+              productPrice={value.productPrice}
+              ProductImage={images[index].image}
+            />
+          ))}
+        </Grid>
+        <br />
+        <br />
+        <Typography variant="h3" color="text.secondary">
+            Seasonal Items
+        </Typography>
+        <br />
+        <br />
+        <Grid container spacing={{ xs: 4, md: 4 }} columns={{ xs: 6, sm: 8, md: 12 }} >
+          {products.map((value, index) => (
+            <ProductImage
+              productId={value.id}
+              productName={value.productName}
+              productDescription={value.productDescription}
+              productPrice={value.productPrice}
+              ProductImage={images[index].image}
+            />
+          ))}
+        </Grid> 
       </div>
     )
   }
