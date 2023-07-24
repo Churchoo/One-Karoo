@@ -24,7 +24,7 @@ interface productsSliceInterface {
         isAddingNewProduct: string | undefined,
         isDeletingProduct: string | undefined,
     },
-    products: {id: number, productName: string, productDescription: string, productPrice: number }[],
+    products: {productId: number, productName: string, productDescription: string, productPrice: number }[],
     AccountId: string,
 }
 

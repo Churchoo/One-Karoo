@@ -4,8 +4,9 @@ interface Props {
     product: any
 }
 const CheckOut = (props:Props) => {
+  
   return (
-    <div>This is the {props.product}</div>
+    <div>This is the The END</div>
   )
 }
 
