@@ -69,43 +69,60 @@ const Homepage = (props: Props) => {
     scrollLeft: 0,
     scrollTop: 0
   });
+
+  useEffect(() => {
+    if (!isMouseDown) {
+      document.body.style.cursor = "default"
+    }
+  }, [
+    isMouseDown
+  ])
+
   const ourRef = useRef<HTMLInputElement>(null);
+
   const handleDragStart = (e: any) => {
     if (!ourRef.current) return
+    e.preventDefault();
+    var mouseTimeout: any;
     const myElement = document.getElementById('Grid1') as HTMLElement;
+    myElement.addEventListener("mousedown", function () {
+      clearTimeout(mouseTimeout);
+      mouseTimeout = setTimeout(function () {
+        document.body.style.cursor = "grabbing"
+        setIsMouseDown(true)
+      }, 50);
+    }, false);
     const startX = e.pageX - myElement.offsetLeft;
     const startY = e.pageY - myElement.offsetTop;
     const scrollLeft = myElement.scrollLeft;
     const scrollTop = myElement.scrollTop;
     mouseCoords.current = { startX, startY, scrollLeft, scrollTop }
-    setIsMouseDown(true)
-    document.body.style.cursor = "grabbing"
-    setIsMouseDown(true)
   }
   const handleDragEnd = () => {
-    setIsMouseDown(false)
+    const myElement = document.getElementById('Grid1') as HTMLElement;
+    myElement.addEventListener("mouseup", function () {
+      setIsMouseDown(false)
+      document.body.style.cursor = "default"
+    }, false);
     document.body.style.cursor = "default"
   }
   const handleDrag = (e: any) => {
-    if (!isMouseDown || !ourRef.current) return;
-    e.preventDefault();
-    //console.log(ourRef.current.children[0].id)
-    const myElement = document.getElementById('Grid1') as HTMLElement;
-    const x = e.pageX - myElement.offsetLeft;
-    const y = e.pageY - myElement.offsetTop;
-    const walkX = (x - mouseCoords.current.startX) * 1.5;
-    const walkY = (y - mouseCoords.current.startY) * 1.5;
-    myElement.scrollLeft = mouseCoords.current.scrollLeft - walkX;
-    myElement.scrollTop = mouseCoords.current.scrollTop - walkY;
-
+    if (!isMouseDown || !ourRef.current) {
+      return;
+    }
+    else {
+      e.preventDefault();
+      //console.log(ourRef.current.children[0].id)
+      const myElement = document.getElementById('Grid1') as HTMLElement;
+      const x = e.pageX - myElement.offsetLeft;
+      const y = e.pageY - myElement.offsetTop;
+      const walkX = (x - mouseCoords.current.startX) * 1.5;
+      const walkY = (y - mouseCoords.current.startY) * 1.5;
+      myElement.scrollLeft = mouseCoords.current.scrollLeft - walkX;
+      myElement.scrollTop = mouseCoords.current.scrollTop - walkY;
+    }
   }
 
-  // const GridRoot = styled(FormControl, {
-  //   name: 'MuiGrid',
-  //   slot: 'Root',
-  //   overridesResolver: (props, styles) => styles.root,
-  // })({});
-  // console.log(GridRoot)
   if (productsNetworkStatus.products === NetworkState.SUCCESS) {
     return (
       <div style={{ paddingLeft: "2.00%", paddingTop: "2.00%" }}>
@@ -141,9 +158,9 @@ const Homepage = (props: Props) => {
                   productImage={images[index].image}
                   productIndex={index}
                   openProductDialog={(productId: number) => {
-                    console.log(productID)
                     handleproductID(productId);
-                    //handleProductDialog();
+                    handleProductDialog();
+                    setIsMouseDown(false)
                   }}
                 />
               </Grid>
@@ -164,8 +181,10 @@ const Homepage = (props: Props) => {
                 productIndex={index}
                 productImage={images[index].image}
                 openProductDialog={(productId: number) => {
-                  handleproductID(productId);
-                  handleProductDialog();
+                  if (!isMouseDown) {
+                    handleproductID(productId);
+                    handleProductDialog();
+                  }
                 }}
               />
             </Grid>
@@ -182,19 +201,19 @@ const Homepage = (props: Props) => {
         <br />
         <Grid container spacing={{ xs: 4, md: 4 }} columns={{ xs: 6, sm: 8, md: 12 }} >
           {products.map((value, index) =>
-            (
-              <Grid item xs={2} sx={{ paddingBottom: '1.00%' }}>
-                <ProductImage
-                  productItem={value}
-                  productIndex={index}
-                  productImage={images[index].image}
-                  openProductDialog={(productId: number) => {
-                    handleproductID(productId);
-                    handleProductDialog();
-                  }}
-                />
-              </Grid>
-            )
+          (
+            <Grid item xs={2} sx={{ paddingBottom: '1.00%' }}>
+              <ProductImage
+                productItem={value}
+                productIndex={index}
+                productImage={images[index].image}
+                openProductDialog={(productId: number) => {
+                  handleproductID(productId);
+                  handleProductDialog();
+                }}
+              />
+            </Grid>
+          )
           )}
         </Grid>
       </div>
