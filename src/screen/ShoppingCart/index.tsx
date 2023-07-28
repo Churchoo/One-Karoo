@@ -14,7 +14,6 @@ interface ShoppingCartItem {
 interface Props {
   shoppingCartItems: ShoppingCartItem[]
   homepage: () => void
-  displayCheckOut: () => void
 }
 const ShoppingCart = (props: Props) => {
 
@@ -134,7 +133,7 @@ const ShoppingCart = (props: Props) => {
           </Box>
         )}
       />
-      <Button variant="text" sx={{ color: "black", fontSize: "38px" }} onClick={() => props.displayCheckOut()}>Check Out</Button>
+      <Button variant="text" sx={{ color: "black", fontSize: "38px" }} onClick={() => {}}>Check Out</Button>
     </div>
   );
 }
