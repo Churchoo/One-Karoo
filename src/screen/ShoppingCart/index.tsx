@@ -14,6 +14,7 @@ interface ShoppingCartItem {
 interface Props {
   shoppingCartItems: ShoppingCartItem[]
   homepage: () => void
+  displayCheckOut: () => void
 }
 const ShoppingCart = (props: Props) => {
 
@@ -22,11 +23,12 @@ const ShoppingCart = (props: Props) => {
   const handleDeleteRow = useCallback(
     (row: MRT_Row<ShoppingCartItem>) => {
       if (
-        !confirm(`Are you sure you want to delete ${row.getValue('firstName')}`)
+        !window.confirm(`Are you sure you want to delete ${row.getValue('productName')}`)
       ) {
         return;
       }
       //send api delete request here, then refetch or update local table data for re-render
+      console.log(tableData)
       tableData.splice(row.index, 1);
       setTableData([...tableData]);
     },
@@ -77,7 +79,8 @@ const ShoppingCart = (props: Props) => {
         data={tableData}
         displayColumnDefOptions={{
           'mrt-row-actions': {
-            size: 250, //set custom width
+            header: '',
+            size: 50, //set custom width
             muiTableHeadCellProps: {
               align: 'center', //change head cell props
             },
@@ -98,6 +101,8 @@ const ShoppingCart = (props: Props) => {
           },
         }}
         enableColumnActions={false}
+        enableRowActions
+        positionActionsColumn='last'
         enableColumnFilters={false}
         enablePagination={false}
         enableSorting={false}
@@ -111,12 +116,12 @@ const ShoppingCart = (props: Props) => {
         }}
         muiTableHeadCellProps={{
           sx: {
-            border: '4px solid rgba(81, 10, 81, 1)',
+            border: '2px solid rgba(151, 151, 10, 40)',
           },
         }}
         muiTableBodyCellProps={{
           sx: {
-            border: '6px solid rgba(10, 81, 81, 1)',
+            border: '1px solid rgba(0, 0, 0, 1)',
           },
         }}
         renderRowActions={({ row, table }) => (
@@ -129,6 +134,7 @@ const ShoppingCart = (props: Props) => {
           </Box>
         )}
       />
+      <Button variant="text" sx={{ color: "black", fontSize: "38px" }} onClick={() => props.displayCheckOut()}>Check Out</Button>
     </div>
   );
 }
