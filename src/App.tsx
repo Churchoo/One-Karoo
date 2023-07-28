@@ -3,6 +3,7 @@ import './App.css';
 import Homepage from './screen/Homepage';
 import ShoppingCart from './screen/ShoppingCart';
 import { useAppSelector } from './hooks/hooks';
+import DeliveryDetails from './screen/DeliveryDetails';
 
 export interface CustomComponent {
   index?:boolean,
@@ -15,20 +16,42 @@ export interface CustomComponent {
 }
 
 const App :React.FC = () => {
-  const [shoppingCartPage, setshoppingCartPage] = useState(false)
-  console.log(shoppingCartPage)
+  const [shoppingCartPage, setShoppingCartPage] = useState(false)
+  const [deliveryDetailsPage, setDeliveryDetailsPage] = useState(false)
+  const [aboutUsPage, setAboutUsPage] = useState(false)
   const shoppingCartItems = useAppSelector((state) => state.shoppingCart.shoppingCart)
 
-  const displayShoppingCart = () => {
-    console.log(shoppingCartPage)
-    setshoppingCartPage(!shoppingCartPage)
+  const displayAboutUs = () => {
+    setAboutUsPage(!aboutUsPage)
   }
 
+  const displayShoppingCart = () => {
+    setShoppingCartPage(!shoppingCartPage)
+  }
+
+  const displayDeliveryDetails = () => {
+    setDeliveryDetailsPage(!deliveryDetailsPage)
+  }
+
+  if(aboutUsPage){
+
+  }
+
+  if(deliveryDetailsPage){
+    return (
+      <DeliveryDetails 
+        homepage={() => displayDeliveryDetails()}
+        aboutUs={() => displayAboutUs()}
+      />
+    )
+  }
   if(shoppingCartPage){
     return (
       <ShoppingCart 
        shoppingCartItems={shoppingCartItems}
        homepage={() => displayShoppingCart()}
+       deliveryPage={() => displayDeliveryDetails()}
+       aboutUs={() => displayAboutUs()}
       />
     )
   }
@@ -36,6 +59,7 @@ const App :React.FC = () => {
    <Homepage
     product={"homepage"}
     displayShoppingCart={()=>displayShoppingCart()}
+    aboutUs={() => displayAboutUs()}
     />
   );
 }

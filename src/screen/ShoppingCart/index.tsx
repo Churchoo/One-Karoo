@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Stack, Tooltip } from '@mui/material';
+import { Box, Button, Grid, IconButton, Stack, Tooltip } from '@mui/material';
 import MaterialReactTable, { MRT_ColumnDef, MRT_Row } from 'material-react-table';
 import React, { useCallback, useMemo, useState } from 'react'
 import ClearIcon from '@mui/icons-material/Clear';
@@ -14,6 +14,8 @@ interface ShoppingCartItem {
 interface Props {
   shoppingCartItems: ShoppingCartItem[]
   homepage: () => void
+  deliveryPage: () => void
+  aboutUs: () => void
 }
 const ShoppingCart = (props: Props) => {
 
@@ -37,7 +39,7 @@ const ShoppingCart = (props: Props) => {
   const getTotal = () => {
     let Total = 0
     for (let i = 0; i < props.shoppingCartItems.length; i++) {
-      if(props.shoppingCartItems[i].productPrice !== undefined){
+      if (props.shoppingCartItems[i].productPrice !== undefined) {
         Total += props.shoppingCartItems[i].productPrice
       }
     }
@@ -72,7 +74,13 @@ const ShoppingCart = (props: Props) => {
 
   return (
     <div style={{ paddingLeft: "4.00%", paddingTop: "4.00%" }}>
-      <Button variant="text" sx={{ color: "black", fontSize: "38px" }} onClick={() => props.homepage()}>One Karoo</Button>
+      <Grid container spacing={{ xs: 4, md: 4 }} columns={{ xs: 6, sm: 8, md: 12 }} >
+        <Button variant="text" sx={{ color: "black", fontSize: "38px" }} onClick={() => props.homepage()}>One Karoo</Button>
+        <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>Catagories</Button>
+        <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>Gift packeges</Button>
+        <Button variant="text" sx={{ color: "black", fontSize: "20px" }} onClick={() => props.aboutUs()}>About Us</Button>
+        <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>Contact Us</Button>
+      </Grid>
       <MaterialReactTable
         columns={columns}
         data={tableData}
@@ -133,7 +141,7 @@ const ShoppingCart = (props: Props) => {
           </Box>
         )}
       />
-      <Button variant="text" sx={{ color: "black", fontSize: "38px" }} onClick={() => {}}>Check Out</Button>
+      <Button variant="text" sx={{ color: "black", fontSize: "38px" }} onClick={() => props.deliveryPage()}>Check Out</Button>
     </div>
   );
 }

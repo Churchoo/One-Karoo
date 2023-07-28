@@ -20,6 +20,7 @@ import { addToShppingCart } from '../../redux/slices/ShoppingCartSlice'
 interface Props {
   product: any,
   displayShoppingCart: () => void
+  aboutUs: () => void
 }
 
 interface ShoppingCartItem {
@@ -141,7 +142,7 @@ const Homepage = (props: Props) => {
           </Typography>
           <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>Catagories</Button>
           <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>Gift packeges</Button>
-          <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>About Us</Button>
+          <Button variant="text" sx={{ color: "black", fontSize: "20px" }} onClick={() => props.aboutUs()}>About Us</Button>
           <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>Contact Us</Button>
           <Button variant="text" sx={{ color: "black", fontSize: "20px" }} onClick={() => props.displayShoppingCart()}>Shopping Cart</Button>
         </Grid>
