@@ -8,6 +8,9 @@ interface Props {
 
 const DeliveryDetails = (props: Props) => {
   const [streetAddress, setStreetAddress] = useState("")
+  const [suburb, setSuburb] = useState("")
+  const [city, setCity] = useState("")
+  const [postalCode, setPostalCode] = useState(0)
   const [recipientName, setRecipientName] = useState("")
   const [recipientNumber, setRecipientNumber] = useState("")
   return (
@@ -48,25 +51,26 @@ const DeliveryDetails = (props: Props) => {
         id="Suburb"
         label="Suburb"
         rows={1}
-        defaultValue={streetAddress}
+        defaultValue={suburb}
         variant="outlined"
-        onChange={(e) => setStreetAddress(e.target.value)}
+        onChange={(e) => setSuburb(e.target.value)}
       />
       <TextField
         id="City"
         label="City/Town"
         rows={1}
-        defaultValue={streetAddress}
+        defaultValue={city}
         variant="outlined"
-        onChange={(e) => setStreetAddress(e.target.value)}
+        onChange={(e) => setCity(e.target.value)}
       />
       <TextField
         id="PostalCode"
         label="Postal Code"
+        type='number'
         rows={1}
-        defaultValue={streetAddress}
+        defaultValue={postalCode}
         variant="outlined"
-        onChange={(e) => setStreetAddress(e.target.value)}
+        onChange={(e) => setPostalCode(parseInt(e.target.value))}
       />
     </div>
   )

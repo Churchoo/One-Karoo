@@ -18,6 +18,7 @@ interface productItem {
     productDescription: string,
     productName: string,
     productPrice: number,
+    productCategory: string
   }
 
   interface ShoppingCartItem {

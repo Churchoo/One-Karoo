@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks'
 import { NetworkState } from '../../constants/networkState'
 import { fetchProducts } from '../../redux/slices/ProductsSlice'
-import { Button, FormControl, Grid, Typography, styled } from '@mui/material'
+import { Autocomplete, Button, FormControl, Grid, InputAdornment, TextField, Typography, styled } from '@mui/material'
 import Image1 from '../../images/Image1.jpg'
 import Image2 from '../../images/Image2.jpg'
 import Image3 from '../../images/Image3.jpg'
@@ -16,6 +16,7 @@ import Image10 from '../../images/Image10.jpg'
 import ProductImage from './ProductImage'
 import ProductInformation from './ProductInformation'
 import { addToShppingCart } from '../../redux/slices/ShoppingCartSlice'
+import { Search } from '@mui/icons-material'
 
 interface Props {
   product: any,
@@ -31,6 +32,14 @@ interface ShoppingCartItem {
   numProducts: number
 }
 
+interface Products {
+  productId: number;
+  productName: string;
+  productDescription: string;
+  productPrice: number;
+  productCategory: string;
+}
+
 const images: { image: any }[] = [{ image: Image1 }, { image: Image2 }, { image: Image3 }, { image: Image4 },
 { image: Image5 }, { image: Image6 }, { image: Image7 }, { image: Image8 }, { image: Image9 },
 { image: Image10 }]
@@ -40,11 +49,20 @@ const Homepage = (props: Props) => {
   const dispatch = useAppDispatch()
 
   const [productDialogOpen, setProductDialogOpen] = useState(false)
-  const [productID, setproductID] = useState(0)
+  const [productID, setProductID] = useState(0)
   const { productsNetworkStatus } = useAppSelector((state) => state.products)
   const { products } = useAppSelector((state) => state.products)
-  const [isMouseDown, setIsMouseDown] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false);
+  const [isMouseDownLong, setIsMouseDownLong] = useState(false);
+  const [filterItems, setFilterItems] = useState<string>("");
+  const [openFilter, setOpenFilter] = useState(false)
+
+const getDisplayFilteredItems = () => {
+  if(filterItems.length > 2){
+    return products.filter((filtered) => filtered.productName.includes(filterItems))
+  }
+  return products
+}
+
   useEffect(() => {
     if (productsNetworkStatus.products === NetworkState.NOT_STARTED) {
       dispatch(fetchProducts())
@@ -62,7 +80,7 @@ const Homepage = (props: Props) => {
   }
 
   const handleproductID = (productId: number) => {
-    setproductID(productId)
+    setProductID(productId)
   }
   const mouseCoords = useRef({
     startX: 0,
@@ -72,11 +90,11 @@ const Homepage = (props: Props) => {
   });
 
   useEffect(() => {
-    if (!isMouseDown) {
+    if (!isMouseDownLong) {
       document.body.style.cursor = "default"
     }
   }, [
-    isMouseDown
+    isMouseDownLong
   ])
 
   const ourRef = useRef<HTMLInputElement>(null);
@@ -90,7 +108,7 @@ const Homepage = (props: Props) => {
       clearTimeout(mouseTimeout);
       mouseTimeout = setTimeout(function () {
         document.body.style.cursor = "grabbing"
-        setIsMouseDown(true)
+        setIsMouseDownLong(true)
       }, 50);
     }, false);
     const startX = e.pageX - myElement.offsetLeft;
@@ -102,18 +120,17 @@ const Homepage = (props: Props) => {
   const handleDragEnd = () => {
     const myElement = document.getElementById('Grid1') as HTMLElement;
     myElement.addEventListener("mouseup", function () {
-      setIsMouseDown(false)
+      setIsMouseDownLong(false)
       document.body.style.cursor = "default"
     }, false);
     document.body.style.cursor = "default"
   }
   const handleDrag = (e: any) => {
-    if (!isMouseDown || !ourRef.current) {
+    if (!isMouseDownLong || !ourRef.current) {
       return;
     }
     else {
       e.preventDefault();
-      //console.log(ourRef.current.children[0].id)
       const myElement = document.getElementById('Grid1') as HTMLElement;
       const x = e.pageX - myElement.offsetLeft;
       const y = e.pageY - myElement.offsetTop;
@@ -146,6 +163,34 @@ const Homepage = (props: Props) => {
           <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>Contact Us</Button>
           <Button variant="text" sx={{ color: "black", fontSize: "20px" }} onClick={() => props.displayShoppingCart()}>Shopping Cart</Button>
         </Grid>
+        <Autocomplete
+          open={openFilter}
+          options={products.map((option) => option.productName)}
+          filterOptions={((options, state) => {
+            console.log(options.filter((filtered) => String(filtered.includes(state.inputValue))))
+            
+            return options.filter((filtered) => filtered.includes(state.inputValue))
+          })}
+          onInputChange={(_, value) => {
+            setFilterItems(value)
+            if (value.length < 3) {
+              if (openFilter) setOpenFilter(false);
+            } else {
+              if (!openFilter) setOpenFilter(true);
+            }
+          }}
+          renderInput={(params) =>
+            <TextField
+              {...params}
+              label="Search"
+              InputProps={{
+                ...params.InputProps,
+                 endAdornment: ( <InputAdornment position="end"> <Button endIcon={<Search />}/> 
+            </InputAdornment> ),
+                type: 'search',
+              }}
+            />}
+        />
         <Typography variant="h3" color="text.secondary" sx={{ paddingTop: '30px', paddingBottom: '15px' }}>
           Specials
         </Typography>
@@ -161,9 +206,10 @@ const Homepage = (props: Props) => {
                   openProductDialog={(productId: number) => {
                     handleproductID(productId);
                     handleProductDialog();
-                    setIsMouseDown(false)
+                    setIsMouseDownLong(false)
                   }}
                 />
+                <Button variant='outlined' sx={{width: '100%'}}>Add To Cart</Button>
               </Grid>
             )
             )}
@@ -182,7 +228,7 @@ const Homepage = (props: Props) => {
                 productIndex={index}
                 productImage={images[index].image}
                 openProductDialog={(productId: number) => {
-                  if (!isMouseDown) {
+                  if (!isMouseDownLong) {
                     handleproductID(productId);
                     handleProductDialog();
                   }

@@ -24,7 +24,7 @@ interface productsSliceInterface {
         isAddingNewProduct: string | undefined,
         isDeletingProduct: string | undefined,
     },
-    products: {productId: number, productName: string, productDescription: string, productPrice: number }[],
+    products: {productId: number, productName: string, productDescription: string, productPrice: number, productCategory: string }[],
     AccountId: string,
 }
 
@@ -58,6 +58,7 @@ const productsSlice = createSlice({
         })
         .addCase(fetchProducts.fulfilled, (state, action) =>{
             state.productsNetworkStatus.products = NetworkState.SUCCESS
+            console.log(action.payload)
             state.products = action?.payload
         })
         .addCase(fetchProducts.rejected, (state, action) =>{
