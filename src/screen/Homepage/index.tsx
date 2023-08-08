@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks'
 import { NetworkState } from '../../constants/networkState'
-import { fetchProducts } from '../../redux/slices/ProductsSlice'
-import { Autocomplete, Button, FormControl, Grid, InputAdornment, TextField, Typography, styled } from '@mui/material'
+import { fetchProducts, updateFilter, updateFilteredCatagories } from '../../redux/slices/ProductsSlice'
+import { Autocomplete, Button, FormControl, Grid, InputAdornment, Menu, MenuItem, TextField, Typography, styled } from '@mui/material'
 import Image1 from '../../images/Image1.jpg'
 import Image2 from '../../images/Image2.jpg'
 import Image3 from '../../images/Image3.jpg'
@@ -19,9 +19,9 @@ import { addToShppingCart } from '../../redux/slices/ShoppingCartSlice'
 import { Search } from '@mui/icons-material'
 
 interface Props {
-  product: any,
   displayShoppingCart: () => void
   aboutUs: () => void
+  displayFilterPage: () => void
 }
 
 interface ShoppingCartItem {
@@ -48,6 +48,7 @@ const images: { image: any }[] = [{ image: Image1 }, { image: Image2 }, { image:
 const Homepage = (props: Props) => {
   const dispatch = useAppDispatch()
 
+  const [anchorCatagories, setAnchorCatagories] = React.useState<null | HTMLElement>(null);
   const [productDialogOpen, setProductDialogOpen] = useState(false)
   const [productID, setProductID] = useState(0)
   const { productsNetworkStatus } = useAppSelector((state) => state.products)
@@ -55,13 +56,17 @@ const Homepage = (props: Props) => {
   const [isMouseDownLong, setIsMouseDownLong] = useState(false);
   const [filterItems, setFilterItems] = useState<string>("");
   const [openFilter, setOpenFilter] = useState(false)
+  const [viewCatagories, setViewCatagories] = useState(false)
 
-const getDisplayFilteredItems = () => {
-  if(filterItems.length > 2){
-    return products.filter((filtered) => filtered.productName.includes(filterItems))
+  const productCatagories = () => {
+    let uniques: Products[] = []
+    products.forEach((value) => {
+      if(!uniques.find((findValue) => findValue.productCategory===value.productCategory)){
+        uniques.push(value)
+      }
+    })
+    return uniques
   }
-  return products
-}
 
   useEffect(() => {
     if (productsNetworkStatus.products === NetworkState.NOT_STARTED) {
@@ -82,6 +87,7 @@ const getDisplayFilteredItems = () => {
   const handleproductID = (productId: number) => {
     setProductID(productId)
   }
+
   const mouseCoords = useRef({
     startX: 0,
     startY: 0,
@@ -140,10 +146,24 @@ const getDisplayFilteredItems = () => {
       myElement.scrollTop = mouseCoords.current.scrollTop - walkY;
     }
   }
+  const open = Boolean(anchorCatagories);
+
+  const handleViewCatagories = () => {
+    setViewCatagories(!viewCatagories)
+  }
+
+  const handleSelectCatagory = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorCatagories(event.currentTarget);
+    handleViewCatagories()
+  };
+  const handleCloseCatagory = () => {
+    setAnchorCatagories(null);
+    handleViewCatagories()
+  };
 
   if (productsNetworkStatus.products === NetworkState.SUCCESS) {
     return (
-      <div style={{ paddingLeft: "2.00%", paddingTop: "2.00%" }}>
+      <div style={{ paddingLeft: "2.00%", paddingTop: "4.00%" }}>
         {productDialogOpen && (
           <ProductInformation
             isOpen={productDialogOpen}
@@ -157,40 +177,72 @@ const getDisplayFilteredItems = () => {
           <Typography variant="h3" color="text.secondary">
             ONE KAROO
           </Typography>
-          <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>Catagories</Button>
+          <Button
+            variant="text"
+            sx={{ color: "black", fontSize: "20px" }}
+            onClick={handleSelectCatagory}
+          >Catagories</Button>
+          <Menu
+            anchorEl={anchorCatagories}
+            open={viewCatagories}
+            onClose={handleCloseCatagory}
+            MenuListProps={{
+              'aria-labelledby': 'basic-button',
+            }}
+          >
+            {productCatagories().map((value, index) =>{
+              return (
+              <MenuItem onClick={() => {
+                handleCloseCatagory()
+                dispatch(updateFilteredCatagories(value.productCategory))
+                props.displayFilterPage()
+              } }>{value.productCategory}</MenuItem>
+            )})}
+          </Menu>
           <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>Gift packeges</Button>
           <Button variant="text" sx={{ color: "black", fontSize: "20px" }} onClick={() => props.aboutUs()}>About Us</Button>
           <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>Contact Us</Button>
           <Button variant="text" sx={{ color: "black", fontSize: "20px" }} onClick={() => props.displayShoppingCart()}>Shopping Cart</Button>
         </Grid>
-        <Autocomplete
-          open={openFilter}
-          options={products.map((option) => option.productName)}
-          filterOptions={((options, state) => {
-            console.log(options.filter((filtered) => String(filtered.includes(state.inputValue))))
-            
-            return options.filter((filtered) => filtered.includes(state.inputValue))
-          })}
-          onInputChange={(_, value) => {
-            setFilterItems(value)
-            if (value.length < 3) {
-              if (openFilter) setOpenFilter(false);
-            } else {
-              if (!openFilter) setOpenFilter(true);
-            }
-          }}
-          renderInput={(params) =>
-            <TextField
-              {...params}
-              label="Search"
-              InputProps={{
-                ...params.InputProps,
-                 endAdornment: ( <InputAdornment position="end"> <Button endIcon={<Search />}/> 
-            </InputAdornment> ),
-                type: 'search',
+        <Grid container>
+          <Grid item xs={3} sx={{ paddingBottom: '1.00%' }}>
+            <Autocomplete
+              open={openFilter}
+              options={products.map((option) => option.productName)}
+              filterOptions={((options, state) => options.filter((filtered) => filtered.includes(state.inputValue)))}
+              onChange={(event, value) => {
+                if (value !== null)
+                  setFilterItems(value)
+                setOpenFilter(false)
               }}
-            />}
-        />
+              onInputChange={(_, value) => {
+                dispatch(updateFilter(value))
+                if (value.length < 3) {
+                  if (openFilter) setOpenFilter(false);
+                } else {
+                  if (!openFilter) setOpenFilter(true);
+                }
+              }}
+              renderInput={(params) =>
+                <TextField
+                  {...params}
+                  label="Search"
+                  InputProps={{
+                    ...params.InputProps,
+                    type: 'search',
+                    endAdornment: (
+                      <InputAdornment position='end' >
+                        <Button onClick={() => {
+                          dispatch(updateFilter(filterItems))
+                          props.displayFilterPage()
+                        }} endIcon={ <Search />} />
+                      </InputAdornment>
+                    )
+                  }}
+                />}
+            />
+          </Grid>
+        </Grid>
         <Typography variant="h3" color="text.secondary" sx={{ paddingTop: '30px', paddingBottom: '15px' }}>
           Specials
         </Typography>
@@ -198,7 +250,7 @@ const getDisplayFilteredItems = () => {
           <Grid id='Grid1' container wrap='nowrap' sx={{ overflowX: 'hidden' }} spacing={2}>
             {products.map((value, index) =>
             (
-              <Grid item xs={2} sx={{ paddingBottom: '1.00%' }}>
+              <Grid item xs={2} sx={{ paddingBottom: '1.00%' }} key={value.productId}>
                 <ProductImage
                   productItem={value}
                   productImage={images[index].image}
@@ -209,7 +261,10 @@ const getDisplayFilteredItems = () => {
                     setIsMouseDownLong(false)
                   }}
                 />
-                <Button variant='outlined' sx={{width: '100%'}}>Add To Cart</Button>
+                <Button variant='outlined' sx={{ width: '100%' }} onClick={() => {
+                  handleproductID(value.productId)
+                  handleProductDialog()
+                }}>Add To Cart</Button>
               </Grid>
             )
             )}
@@ -269,7 +324,7 @@ const getDisplayFilteredItems = () => {
   return (
     <div>
       <Typography variant="h4" component="h2">
-        This is the {props.product}
+        This is the
       </Typography>
       <Grid >
 

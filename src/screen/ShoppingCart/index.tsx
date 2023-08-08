@@ -2,6 +2,7 @@ import { Box, Button, Grid, IconButton, Stack, Tooltip } from '@mui/material';
 import MaterialReactTable, { MRT_ColumnDef, MRT_Row } from 'material-react-table';
 import React, { useCallback, useMemo, useState } from 'react'
 import ClearIcon from '@mui/icons-material/Clear';
+import { removeShoppingCartSuccess } from '../../redux/slices/ShoppingCartSlice';
 
 interface ShoppingCartItem {
   productId: number,
@@ -29,8 +30,8 @@ const ShoppingCart = (props: Props) => {
         return;
       }
       //send api delete request here, then refetch or update local table data for re-render
-      console.log(tableData)
       tableData.splice(row.index, 1);
+      removeShoppingCartSuccess(row.index)
       setTableData([...tableData]);
     },
     [tableData],
@@ -38,13 +39,19 @@ const ShoppingCart = (props: Props) => {
 
   const getTotal = () => {
     let Total = 0
-    for (let i = 0; i < props.shoppingCartItems.length; i++) {
-      if (props.shoppingCartItems[i].productPrice !== undefined) {
-        Total += props.shoppingCartItems[i].productPrice
+    for (let i = 0; i < tableData.length; i++) {
+      if (tableData[i].productPrice !== undefined) {
+        Total += tableData[i].productPrice
       }
     }
     return Total
+
   }
+
+  const getBoxSize = () => {
+
+  }
+
   const columns = useMemo<MRT_ColumnDef<ShoppingCartItem>[]>(
     () => [
       {

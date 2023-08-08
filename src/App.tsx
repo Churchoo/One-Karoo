@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import './App.css';
 import Homepage from './screen/Homepage';
 import ShoppingCart from './screen/ShoppingCart';
-import { useAppSelector } from './hooks/hooks';
+import { useAppDispatch, useAppSelector } from './hooks/hooks';
 import DeliveryDetails from './screen/DeliveryDetails';
+import FilteredItems from './screen/FilteredItems';
+import AboutUs from './screen/AboutUs';
+import { updateFilter, updateFilteredCatagories } from './redux/slices/ProductsSlice';
 
 export interface CustomComponent {
   index?:boolean,
@@ -16,31 +19,69 @@ export interface CustomComponent {
 }
 
 const App :React.FC = () => {
+  const dispatch = useAppDispatch()
+  
   const [shoppingCartPage, setShoppingCartPage] = useState(false)
+  const [filterItemsPage, setFilterItemsPage] = useState(false)
   const [deliveryDetailsPage, setDeliveryDetailsPage] = useState(false)
   const [aboutUsPage, setAboutUsPage] = useState(false)
   const shoppingCartItems = useAppSelector((state) => state.shoppingCart.shoppingCart)
+
+  const displayHomePage = () => {
+    setAboutUsPage(false)
+    setFilterItemsPage(false)
+    setShoppingCartPage(false)
+    setDeliveryDetailsPage(false)
+    dispatch(updateFilter(""))
+    dispatch(updateFilteredCatagories(""))
+  }
 
   const displayAboutUs = () => {
     setAboutUsPage(!aboutUsPage)
   }
 
+  const displayFilterPage = () => {
+    console.log(filterItemsPage)
+    setAboutUsPage(false)
+    setDeliveryDetailsPage(false)
+    setShoppingCartPage(false)
+    setFilterItemsPage(!filterItemsPage)
+  }
+
   const displayShoppingCart = () => {
+    setAboutUsPage(false)
+    setFilterItemsPage(false)
+    setDeliveryDetailsPage(false)
     setShoppingCartPage(!shoppingCartPage)
   }
 
   const displayDeliveryDetails = () => {
+    setAboutUsPage(false)
+    setFilterItemsPage(false)
+    setShoppingCartPage(false)
     setDeliveryDetailsPage(!deliveryDetailsPage)
   }
 
   if(aboutUsPage){
+    <AboutUs 
+    homepage={() => displayAboutUs()}
+    />
+  }
 
+  if(filterItemsPage){
+    return(
+      <FilteredItems
+      homepage={() => displayHomePage()}
+      displayShoppingCart={()=> displayShoppingCart}
+      aboutUs={()=> displayAboutUs}
+      />
+    )
   }
 
   if(deliveryDetailsPage){
     return (
       <DeliveryDetails 
-        homepage={() => displayDeliveryDetails()}
+        homepage={() => displayHomePage()}
         aboutUs={() => displayAboutUs()}
       />
     )
@@ -49,7 +90,7 @@ const App :React.FC = () => {
     return (
       <ShoppingCart 
        shoppingCartItems={shoppingCartItems}
-       homepage={() => displayShoppingCart()}
+       homepage={() => displayHomePage()}
        deliveryPage={() => displayDeliveryDetails()}
        aboutUs={() => displayAboutUs()}
       />
@@ -57,7 +98,7 @@ const App :React.FC = () => {
   }
   return (
    <Homepage
-    product={"homepage"}
+   displayFilterPage={()=>displayFilterPage()}
     displayShoppingCart={()=>displayShoppingCart()}
     aboutUs={() => displayAboutUs()}
     />

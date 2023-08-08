@@ -14,42 +14,48 @@ export const fetchProducts = createAsyncThunk('product/getProducts', async () =>
 interface productsSliceInterface {
     productsNetworkStatus: {
         products: NetworkState,
-        isUpdatingProductInfo: NetworkState
-        isAddingNewProduct: NetworkState,
-        isDeletingProduct: NetworkState,
     }
     errors: {
         products: string | undefined,
-        isUpdatingProductInfo: string | undefined,
-        isAddingNewProduct: string | undefined,
-        isDeletingProduct: string | undefined,
     },
-    products: {productId: number, productName: string, productDescription: string, productPrice: number, productCategory: string }[],
+    products: {
+        productId: number, 
+        productName: string, 
+        productDescription: string, 
+        productPrice: number, 
+        productCategory: string, 
+        productWidth: number, 
+        productLength:number, 
+        productHeight: number 
+    }[],
+    filteredProducts: string,
+    filteredCatagories: string,
     AccountId: string,
 }
 
 const initialState: productsSliceInterface = {
     productsNetworkStatus: {
         products: NetworkState.NOT_STARTED,
-        isUpdatingProductInfo: NetworkState.NOT_STARTED,
-        isAddingNewProduct: NetworkState.NOT_STARTED,
-        isDeletingProduct: NetworkState.NOT_STARTED,
     },
     errors: {
         products: '',
-        isUpdatingProductInfo: '',
-        isAddingNewProduct: '',
-        isDeletingProduct: '',
     },
     AccountId: '',
     products: [],
+    filteredProducts: "",
+    filteredCatagories: "",
 }
 
 const productsSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
-
+    updateFilter(state, action) {
+        state.filteredProducts = action.payload
+    },
+    updateFilteredCatagories(state, action) {
+        state.filteredCatagories = action.payload
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -70,7 +76,8 @@ const productsSlice = createSlice({
 });
 
 export const {
-
+    updateFilter,
+    updateFilteredCatagories
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

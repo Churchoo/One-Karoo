@@ -65,6 +65,12 @@ const shoppingCartSlice = createSlice({
         state.shoppingCartNetworkStatus.shoppingCart = NetworkState.ERROR;
 
       },
+      removeShoppingCartSuccess(state, action){
+        state.shoppingCart = state.shoppingCart.splice(action.payload, 1);
+      },
+      removeShoppingCartError(state){
+        state.shoppingCartNetworkStatus.shoppingCart = NetworkState.ERROR;
+      },
   },
   extraReducers: (builder) => {
   },
@@ -72,7 +78,9 @@ const shoppingCartSlice = createSlice({
 
 export const {
     addShoppingCartSuccess,
-    addShoppingCartItemError
+    addShoppingCartItemError,
+    removeShoppingCartSuccess,
+    removeShoppingCartError
 } = shoppingCartSlice.actions;
 
 export default shoppingCartSlice.reducer;
