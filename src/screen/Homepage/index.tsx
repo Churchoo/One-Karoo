@@ -15,8 +15,9 @@ import Image9 from '../../images/Image9.jpg'
 import Image10 from '../../images/Image10.jpg'
 import ProductImage from './ProductImage'
 import ProductInformation from './ProductInformation'
-import { addToShppingCart } from '../../redux/slices/ShoppingCartSlice'
+import { addToShppingCart, goToCart } from '../../redux/slices/ShoppingCartSlice'
 import { Search } from '@mui/icons-material'
+import { fetchBox } from '../../redux/slices/BoxSlice'
 
 interface Props {
   displayShoppingCart: () => void
@@ -29,15 +30,21 @@ interface ShoppingCartItem {
   productDescription: string,
   productName: string,
   productPrice: number,
-  numProducts: number
+  numProducts: number,
+  productWidth: number,
+  productLength: number,
+  productHeight: number
 }
 
 interface Products {
-  productId: number;
-  productName: string;
-  productDescription: string;
-  productPrice: number;
-  productCategory: string;
+  productId: number,
+  productName: string,
+  productDescription: string,
+  productPrice: number,
+  productCategory: string,
+  productWidth: number,
+  productLength: number,
+  productHeight: number
 }
 
 const images: { image: any }[] = [{ image: Image1 }, { image: Image2 }, { image: Image3 }, { image: Image4 },
@@ -52,16 +59,18 @@ const Homepage = (props: Props) => {
   const [productDialogOpen, setProductDialogOpen] = useState(false)
   const [productID, setProductID] = useState(0)
   const { productsNetworkStatus } = useAppSelector((state) => state.products)
+  const { boxNetworkStatus } = useAppSelector((state) => state.boxs)
   const { products } = useAppSelector((state) => state.products)
   const [isMouseDownLong, setIsMouseDownLong] = useState(false);
   const [filterItems, setFilterItems] = useState<string>("");
   const [openFilter, setOpenFilter] = useState(false)
   const [viewCatagories, setViewCatagories] = useState(false)
+  const box = useAppSelector((state) => state.boxs.box)
 
   const productCatagories = () => {
     let uniques: Products[] = []
     products.forEach((value) => {
-      if(!uniques.find((findValue) => findValue.productCategory===value.productCategory)){
+      if (!uniques.find((findValue) => findValue.productCategory === value.productCategory)) {
         uniques.push(value)
       }
     })
@@ -69,8 +78,9 @@ const Homepage = (props: Props) => {
   }
 
   useEffect(() => {
-    if (productsNetworkStatus.products === NetworkState.NOT_STARTED) {
+    if (productsNetworkStatus.products === NetworkState.NOT_STARTED && boxNetworkStatus.getBox === NetworkState.NOT_STARTED) {
       dispatch(fetchProducts())
+      dispatch(fetchBox())
     }
   }, [
     dispatch,
@@ -161,7 +171,7 @@ const Homepage = (props: Props) => {
     handleViewCatagories()
   };
 
-  if (productsNetworkStatus.products === NetworkState.SUCCESS) {
+  if (productsNetworkStatus.products === NetworkState.SUCCESS && boxNetworkStatus.getBox === NetworkState.SUCCESS) {
     return (
       <div style={{ paddingLeft: "2.00%", paddingTop: "4.00%" }}>
         {productDialogOpen && (
@@ -190,19 +200,21 @@ const Homepage = (props: Props) => {
               'aria-labelledby': 'basic-button',
             }}
           >
-            {productCatagories().map((value, index) =>{
+            {productCatagories().map((value, index) => {
               return (
-              <MenuItem onClick={() => {
-                handleCloseCatagory()
-                dispatch(updateFilteredCatagories(value.productCategory))
-                props.displayFilterPage()
-              } }>{value.productCategory}</MenuItem>
-            )})}
+                <MenuItem onClick={() => {
+                  handleCloseCatagory()
+                  dispatch(updateFilteredCatagories(value.productCategory))
+                  props.displayFilterPage()
+                }}>{value.productCategory}</MenuItem>
+              )
+            })}
           </Menu>
           <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>Gift packeges</Button>
           <Button variant="text" sx={{ color: "black", fontSize: "20px" }} onClick={() => props.aboutUs()}>About Us</Button>
           <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>Contact Us</Button>
-          <Button variant="text" sx={{ color: "black", fontSize: "20px" }} onClick={() => props.displayShoppingCart()}>Shopping Cart</Button>
+          <Button variant="text" sx={{ color: "black", fontSize: "20px" }} onClick={() => {    dispatch(goToCart(box));
+            props.displayShoppingCart()}}>Shopping Cart</Button>
         </Grid>
         <Grid container>
           <Grid item xs={3} sx={{ paddingBottom: '1.00%' }}>
@@ -235,7 +247,7 @@ const Homepage = (props: Props) => {
                         <Button onClick={() => {
                           dispatch(updateFilter(filterItems))
                           props.displayFilterPage()
-                        }} endIcon={ <Search />} />
+                        }} endIcon={<Search />} />
                       </InputAdornment>
                     )
                   }}

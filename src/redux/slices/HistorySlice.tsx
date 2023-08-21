@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { NetworkState } from '../../constants/networkState';
-import { getProducts } from '../../api/ProductAPI';
+import { getHistory } from '../../api/HistoryAPI';
 
 export const fetchHistory = createAsyncThunk('history/getHistory', async () => {
     try {
-        const res = await getProducts()
+        const res = await getHistory({accountId: 123})
         return res
     } catch (error: any) {
         throw new Error(error.message)

@@ -26,7 +26,10 @@ interface ShoppingCartItem {
   productDescription: string,
   productName: string,
   productPrice: number,
-  numProducts: number
+  numProducts: number,
+  productWidth: number,
+  productLength: number,
+  productHeight: number
 }
 
 const images: { image: any }[] = [{ image: Image1 }, { image: Image2 }, { image: Image3 }, { image: Image4 },

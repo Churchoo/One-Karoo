@@ -7,6 +7,7 @@ import DeliveryDetails from './screen/DeliveryDetails';
 import FilteredItems from './screen/FilteredItems';
 import AboutUs from './screen/AboutUs';
 import { updateFilter, updateFilteredCatagories } from './redux/slices/ProductsSlice';
+import { goToCart } from './redux/slices/ShoppingCartSlice';
 
 export interface CustomComponent {
   index?:boolean,
@@ -26,6 +27,7 @@ const App :React.FC = () => {
   const [deliveryDetailsPage, setDeliveryDetailsPage] = useState(false)
   const [aboutUsPage, setAboutUsPage] = useState(false)
   const shoppingCartItems = useAppSelector((state) => state.shoppingCart.shoppingCart)
+  
 
   const displayHomePage = () => {
     setAboutUsPage(false)

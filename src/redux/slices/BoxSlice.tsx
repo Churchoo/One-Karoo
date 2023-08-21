@@ -18,7 +18,7 @@ interface boxSliceInterface {
     errors: {
         box: string | undefined,
     },
-    box: {boxId: number, Width: number, Length: number, Height: number, Size: string, Price: number }[],
+    box: {boxId: number, width: number, length: number, height: number, Size: string, price: number }[],
 }
 
 const initialState: boxSliceInterface = {

@@ -11,5 +11,6 @@ export const getBox = async () => {
         },
       }
     );
+    console.log(response.data)
     return response.data;
   };

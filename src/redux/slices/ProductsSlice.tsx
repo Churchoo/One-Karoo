@@ -64,7 +64,6 @@ const productsSlice = createSlice({
         })
         .addCase(fetchProducts.fulfilled, (state, action) =>{
             state.productsNetworkStatus.products = NetworkState.SUCCESS
-            console.log(action.payload)
             state.products = action?.payload
         })
         .addCase(fetchProducts.rejected, (state, action) =>{

@@ -18,7 +18,10 @@ interface productItem {
     productDescription: string,
     productName: string,
     productPrice: number,
-    productCategory: string
+    productCategory: string,
+    productWidth: number,
+    productLength: number,
+    productHeight: number
   }
 
   interface ShoppingCartItem {
@@ -26,7 +29,10 @@ interface productItem {
     productDescription: string,
     productName: string,
     productPrice: number,
-    numProducts: number
+    numProducts: number,
+    productWidth: number,
+    productLength: number,
+    productHeight: number
   }
 interface Props {
     isOpen: boolean,
@@ -97,7 +103,7 @@ const ProductInformation = (props: Props) => {
                 <IconButton onClick={() => setNumItems(numItems+1)} aria-label='add one' >
                     <ArrowForwardIosIcon />
                 </IconButton>
-                <Button onClick={() =>props.addDialog({productId: props.productItem.productId, productDescription: props.productItem.productDescription, productName: props.productItem.productName, productPrice: props.productItem.productPrice, numProducts: numItems})} color="primary">
+                <Button onClick={() =>props.addDialog({productId: props.productItem.productId, productDescription: props.productItem.productDescription, productName: props.productItem.productName, productPrice: props.productItem.productPrice, numProducts: numItems, productWidth: props.productItem.productWidth, productLength: props.productItem.productLength, productHeight: props.productItem.productHeight})} color="primary">
                     Add Item
                 </Button>
                 <Button onClick={props.closeDialog} color="primary">

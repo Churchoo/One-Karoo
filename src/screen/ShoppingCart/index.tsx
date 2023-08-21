@@ -2,14 +2,19 @@ import { Box, Button, Grid, IconButton, Stack, Tooltip } from '@mui/material';
 import MaterialReactTable, { MRT_ColumnDef, MRT_Row } from 'material-react-table';
 import React, { useCallback, useMemo, useState } from 'react'
 import ClearIcon from '@mui/icons-material/Clear';
-import { removeShoppingCartSuccess } from '../../redux/slices/ShoppingCartSlice';
+import { addToShppingCart, removeShoppingCartSuccess } from '../../redux/slices/ShoppingCartSlice';
+import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
+import { cubicCalculation } from '../../Calculations/cubicMeterCalculation';
 
 interface ShoppingCartItem {
   productId: number,
   productDescription: string,
   productName: string,
   productPrice: number,
-  numProducts: number
+  numProducts: number,
+  productWidth: number,
+  productLength: number,
+  productHeight: number
 }
 
 interface Props {
@@ -19,8 +24,8 @@ interface Props {
   aboutUs: () => void
 }
 const ShoppingCart = (props: Props) => {
+  const [tableData, setTableData] = useState<ShoppingCartItem[]>(props.shoppingCartItems);
 
-  const [tableData, setTableData] = useState<ShoppingCartItem[]>(() => props.shoppingCartItems);
 
   const handleDeleteRow = useCallback(
     (row: MRT_Row<ShoppingCartItem>) => {
@@ -35,7 +40,7 @@ const ShoppingCart = (props: Props) => {
       setTableData([...tableData]);
     },
     [tableData],
-  );
+  )
 
   const getTotal = () => {
     let Total = 0
@@ -44,11 +49,11 @@ const ShoppingCart = (props: Props) => {
         Total += tableData[i].productPrice
       }
     }
+    // if (!addedBox && tableData.length > 0) {
+    //   AddBox()
+    // }
+
     return Total
-
-  }
-
-  const getBoxSize = () => {
 
   }
 
