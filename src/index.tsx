@@ -10,6 +10,7 @@ import reportWebVitals from './reportWebVitals';
 
 // @ts-expect-error
 import theme from 'theme'
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
@@ -17,11 +18,13 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 function Root() {
   return (
     <React.StrictMode>
+      <GoogleOAuthProvider clientId='95145798580-pvj3rvi93dt34lpnqlsjilmfrbnmjajm.apps.googleusercontent.com'>
         <Provider store={store}>
           <BrowserRouter>
             <App />
           </BrowserRouter>
         </Provider>
+        </GoogleOAuthProvider>
     </React.StrictMode>
   )
 }

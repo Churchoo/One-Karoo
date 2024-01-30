@@ -24,6 +24,7 @@ interface productsSliceInterface {
         productDescription: string, 
         productPrice: number, 
         productCategory: string, 
+        productAmount: number,
         productWidth: number, 
         productLength:number, 
         productHeight: number 

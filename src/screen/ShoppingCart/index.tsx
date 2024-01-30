@@ -85,7 +85,7 @@ const ShoppingCart = (props: Props) => {
   );
 
   return (
-    <div style={{ paddingLeft: "4.00%", paddingTop: "4.00%" }}>
+    <div style={{ paddingLeft: "4.00%", paddingTop: "4.00%", height: '100%' }}>
       <Grid container spacing={{ xs: 4, md: 4 }} columns={{ xs: 6, sm: 8, md: 12 }} >
         <Button variant="text" sx={{ color: "black", fontSize: "38px" }} onClick={() => props.homepage()}>One Karoo</Button>
         <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>Catagories</Button>
@@ -109,14 +109,14 @@ const ShoppingCart = (props: Props) => {
             enableResizing: true,
             muiTableHeadCellProps: {
               sx: {
-                fontSize: '1.4rem',
+                fontSize: '1.6rem',
               },
             },
           },
           'mrt-row-select': {
             enableColumnActions: true,
             enableHiding: true,
-            size: 100,
+            size: 110,
           },
         }}
         enableColumnActions={false}
@@ -130,17 +130,17 @@ const ShoppingCart = (props: Props) => {
         muiTableBodyRowProps={{ hover: false }}
         muiTableProps={{
           sx: {
-            border: '2px solid rgba(81, 81, 10, 40)',
+            border: '3px solid rgba(81, 81, 10, 40)',
           },
         }}
         muiTableHeadCellProps={{
           sx: {
-            border: '2px solid rgba(151, 151, 10, 40)',
+            border: '4px solid rgba(151, 151, 10, 40)',
           },
         }}
         muiTableBodyCellProps={{
           sx: {
-            border: '1px solid rgba(0, 0, 0, 1)',
+            border: '8px solid rgba(0, 0, 0, 180)',
           },
         }}
         renderRowActions={({ row, table }) => (

@@ -19,6 +19,7 @@ interface productItem {
     productName: string,
     productPrice: number,
     productCategory: string,
+    productAmount: number,
     productWidth: number,
     productLength: number,
     productHeight: number
@@ -77,6 +78,7 @@ const ProductInformation = (props: Props) => {
                 </IconButton>
                 <TextField 
                 required
+                error={props.productItem.productAmount>numItems}
                 defaultValue={numItems}
                 value={numItems}
                 type='number'
@@ -100,7 +102,7 @@ const ProductInformation = (props: Props) => {
                     MozAppearance: "textfield",
                   },}}
                 />
-                <IconButton onClick={() => setNumItems(numItems+1)} aria-label='add one' >
+                <IconButton onClick={() => setNumItems(numItems+1)} aria-label='add one' disabled={props.productItem.productAmount>=numItems} >
                     <ArrowForwardIosIcon />
                 </IconButton>
                 <Button onClick={() =>props.addDialog({productId: props.productItem.productId, productDescription: props.productItem.productDescription, productName: props.productItem.productName, productPrice: props.productItem.productPrice, numProducts: numItems, productWidth: props.productItem.productWidth, productLength: props.productItem.productLength, productHeight: props.productItem.productHeight})} color="primary">

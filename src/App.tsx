@@ -8,9 +8,10 @@ import FilteredItems from './screen/FilteredItems';
 import AboutUs from './screen/AboutUs';
 import { updateFilter, updateFilteredCatagories } from './redux/slices/ProductsSlice';
 import { goToCart } from './redux/slices/ShoppingCartSlice';
+import karooBackground from './images/karooPicPlaceholder.jpg'
 
 export interface CustomComponent {
-  index?:boolean,
+  index?: boolean,
   path: string,
   element: any,
   children?: any[],
@@ -19,15 +20,16 @@ export interface CustomComponent {
   key?: string
 }
 
-const App :React.FC = () => {
+const App: React.FC = () => {
   const dispatch = useAppDispatch()
-  
+
   const [shoppingCartPage, setShoppingCartPage] = useState(false)
   const [filterItemsPage, setFilterItemsPage] = useState(false)
   const [deliveryDetailsPage, setDeliveryDetailsPage] = useState(false)
   const [aboutUsPage, setAboutUsPage] = useState(false)
+  const [loggedIn, setLoggedIn] = useState(false)
   const shoppingCartItems = useAppSelector((state) => state.shoppingCart.shoppingCart)
-  
+
 
   const displayHomePage = () => {
     setAboutUsPage(false)
@@ -40,6 +42,10 @@ const App :React.FC = () => {
 
   const displayAboutUs = () => {
     setAboutUsPage(!aboutUsPage)
+  }
+
+  const setLogin = () => {
+    setLoggedIn(!loggedIn)
   }
 
   const displayFilterPage = () => {
@@ -64,46 +70,75 @@ const App :React.FC = () => {
     setDeliveryDetailsPage(!deliveryDetailsPage)
   }
 
-  if(aboutUsPage){
-    <AboutUs 
-    homepage={() => displayAboutUs()}
+  if (aboutUsPage) {
+    <AboutUs
+      homepage={() => displayHomePage()}
     />
   }
 
-  if(filterItemsPage){
-    return(
-      <FilteredItems
-      homepage={() => displayHomePage()}
-      displayShoppingCart={()=> displayShoppingCart}
-      aboutUs={()=> displayAboutUs}
-      />
+  if (filterItemsPage) {
+    return (
+        <FilteredItems
+          homepage={() => displayHomePage()}
+          displayShoppingCart={() => displayShoppingCart}
+          aboutUs={() => displayAboutUs}
+        />
     )
   }
 
-  if(deliveryDetailsPage){
+  if (deliveryDetailsPage) {
     return (
-      <DeliveryDetails 
-        homepage={() => displayHomePage()}
-        aboutUs={() => displayAboutUs()}
-      />
+      // <div style={{
+      //   backgroundImage: `url(${karooBackground})`,
+      //   backgroundSize: 'auto',
+      //   backgroundAttachment: 'fixed',
+      //   backgroundRepeat: 'no-repeat',
+      //   backgroundPosition: 'center',
+      //   overflow: 'hidden'
+      // }}>
+        <DeliveryDetails
+          homepage={() => displayHomePage()}
+          aboutUs={() => displayAboutUs()}
+        />
+      //</div>
     )
   }
-  if(shoppingCartPage){
+  if (shoppingCartPage) {
     return (
-      <ShoppingCart 
-       shoppingCartItems={shoppingCartItems}
-       homepage={() => displayHomePage()}
-       deliveryPage={() => displayDeliveryDetails()}
-       aboutUs={() => displayAboutUs()}
-      />
+      // <div style={{
+      //   backgroundImage: `url(${karooBackground})`,
+      //   backgroundSize: 'auto',
+      //   backgroundAttachment: 'fixed',
+      //   backgroundRepeat: 'no-repeat',
+      //   backgroundPosition: 'center',
+      //   overflow: 'hidden'
+      // }}>
+        <ShoppingCart
+          shoppingCartItems={shoppingCartItems}
+          homepage={() => displayHomePage()}
+          deliveryPage={() => displayDeliveryDetails()}
+          aboutUs={() => displayAboutUs()}
+        />
+      //</div>
     )
   }
   return (
-   <Homepage
-   displayFilterPage={()=>displayFilterPage()}
-    displayShoppingCart={()=>displayShoppingCart()}
-    aboutUs={() => displayAboutUs()}
-    />
+    //<div style={{
+    //   backgroundImage: `url(${karooBackground})`,
+    //   backgroundSize: '100% 100%',
+    //   backgroundAttachment: 'fixed',
+    //   backgroundRepeat: 'no-repeat',
+    //   backgroundPosition: 'center',
+    //   overflow: 'hidden'
+    // }}>
+      <Homepage
+        userLoggedIn={loggedIn}
+        displayFilterPage={() => displayFilterPage()}
+        displayShoppingCart={() => displayShoppingCart()}
+        aboutUs={() => displayAboutUs()}
+        login={() => setLogin()}
+      />
+    //</div>
   );
 }
 

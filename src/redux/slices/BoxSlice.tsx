@@ -43,7 +43,6 @@ const boxSlice = createSlice({
         })
         .addCase(fetchBox.fulfilled, (state, action) =>{
             state.boxNetworkStatus.getBox = NetworkState.SUCCESS
-            console.log(action.payload)
             state.box = action?.payload
         })
         .addCase(fetchBox.rejected, (state, action) =>{
