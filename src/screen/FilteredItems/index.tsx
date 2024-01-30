@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import ProductInformation from '../Homepage/ProductInformation'
-import { Grid, Typography, Button, Autocomplete, TextField, InputAdornment } from '@mui/material'
+import { Grid, Typography, Button, Autocomplete, TextField, InputAdornment, Menu, MenuItem } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks'
 import ProductImage from '../Homepage/ProductImage'
 import { Search } from '@mui/icons-material'
@@ -14,11 +14,15 @@ import Image7 from '../../images/Image7.jpg'
 import Image8 from '../../images/Image8.jpg'
 import Image9 from '../../images/Image9.jpg'
 import Image10 from '../../images/Image10.jpg'
-import { addToShppingCart } from '../../redux/slices/ShoppingCartSlice'
+import Logo from '../../images/Church_Logo.jpg'
+import { addToShppingCart, goToCart } from '../../redux/slices/ShoppingCartSlice'
+import { fetchProducts, updateFilter, updateFilteredCatagories } from '../../redux/slices/ProductsSlice'
 interface Props {
   homepage: () => void
-  displayShoppingCart: () => void,
+  displayShoppingCart: () => void
   aboutUs: () => void
+  displayFilterPage: () => void
+  userLoggedIn: boolean
 }
 
 interface ShoppingCartItem {
@@ -32,6 +36,18 @@ interface ShoppingCartItem {
   productHeight: number
 }
 
+interface Products {
+  productId: number,
+  productName: string,
+  productDescription: string,
+  productPrice: number,
+  productCategory: string,
+  productAmount: number,
+  productWidth: number,
+  productLength: number,
+  productHeight: number
+}
+
 const images: { image: any }[] = [{ image: Image1 }, { image: Image2 }, { image: Image3 }, { image: Image4 },
 { image: Image5 }, { image: Image6 }, { image: Image7 }, { image: Image8 }, { image: Image9 },
 { image: Image10 }]
@@ -39,20 +55,25 @@ const images: { image: any }[] = [{ image: Image1 }, { image: Image2 }, { image:
 const FilteredItems = (props: Props) => {
   const dispatch = useAppDispatch()
 
+  const [anchorCatagories, setAnchorCatagories] = React.useState<null | HTMLElement>(null)
+  const [anchorAccounts, setAnchorAccounts] = React.useState<null | HTMLElement>(null)
   const { products } = useAppSelector((state) => state.products)
   const { filteredProducts, filteredCatagories } = useAppSelector((state) => state.products)
   const [productDialogOpen, setProductDialogOpen] = useState(false)
   const [productID, setProductID] = useState(0)
-  const [filterItems, setFilterItems] = useState<string>(filteredProducts);
+  const [filterItems, setFilterItems] = useState<string>(filteredProducts)
   const [openFilter, setOpenFilter] = useState(false)
-  const [isMouseDownLong, setIsMouseDownLong] = useState(false);
-
+  const [isMouseDownLong, setIsMouseDownLong] = useState(false)
+  const [viewCatagories, setViewCatagories] = useState(false)
+  const [viewAccounts, setViewAccounts] = useState(false)
+  const [loginMenuDialogOpen, setLoginMenuDialogOpen] = useState(false)
+  const box = useAppSelector((state) => state.boxs.box)
   const getDisplayFilteredItems = () => {
     if (filterItems.length > 2) {
       return products.filter((filtered) => filtered.productName.includes(filterItems))
     }
-    else if(filteredCatagories.length > 0){
-      return products.filter((filtered) => filtered.productCategory===filteredCatagories)
+    else if (filteredCatagories.length > 0) {
+      return products.filter((filtered) => filtered.productCategory === filteredCatagories)
     }
     return products
   }
@@ -67,6 +88,20 @@ const FilteredItems = (props: Props) => {
 
   const handleproductID = (productId: number) => {
     setProductID(productId)
+  }
+
+  const handleLoginMenuDialog = () => {
+    setLoginMenuDialogOpen(!loginMenuDialogOpen)
+  }
+
+  const productCatagories = () => {
+    let uniques: Products[] = []
+    products.forEach((value) => {
+      if (!uniques.find((findValue) => findValue.productCategory === value.productCategory)) {
+        uniques.push(value)
+      }
+    })
+    return uniques
   }
 
   const mouseCoords = useRef({
@@ -127,8 +162,36 @@ const FilteredItems = (props: Props) => {
     }
   }
 
+  const handleViewCatagories = () => {
+    setViewCatagories(!viewCatagories)
+  }
+
+  const handleViewAccounts = () => {
+    setViewAccounts(!viewAccounts)
+  }
+
+  const handleSelectCatagory = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorCatagories(event.currentTarget);
+    handleViewCatagories()
+  };
+
+  const handleSelectAccounts = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorAccounts(event.currentTarget);
+    handleViewAccounts()
+  };
+
+  const handleCloseAccount = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorAccounts(null);
+    handleViewAccounts()
+  };
+
+  const handleCloseCatagory = () => {
+    setAnchorCatagories(null);
+    handleViewCatagories()
+  };
+
   return (
-    <div style={{ paddingLeft: "2.00%", paddingTop: "2.00%" }}>
+    <div>
       {productDialogOpen && (
         <ProductInformation
           isOpen={productDialogOpen}
@@ -138,20 +201,79 @@ const FilteredItems = (props: Props) => {
           productImage={images[productID].image}
         />
       )}
-      <Grid container spacing={{ xs: 4, md: 4 }} columns={{ xs: 6, sm: 8, md: 12 }} >
-      <Button variant="text" sx={{ color: "black", fontSize: "38px" }} onClick={() => props.homepage()}>ONE KAROO</Button>
-        <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>Catagories</Button>
-        <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>Gift packeges</Button>
-        <Button variant="text" sx={{ color: "black", fontSize: "20px" }} onClick={() => props.aboutUs()}>About Us</Button>
-        <Button variant="text" sx={{ color: "black", fontSize: "20px" }}>Contact Us</Button>
-        <Button variant="text" sx={{ color: "black", fontSize: "20px" }} onClick={() => props.displayShoppingCart()}>Shopping Cart</Button>
-      </Grid>
+ <div style={{ height: '19vh', width: '100%' }}>
+          <img
+            src={`${Logo}`}
+            style={{ top: 0, left: 0, height: '100%', float: 'left', justifySelf: 'start' }}
+            alt=''
+          />
+          <div style={{ backgroundColor: '#09456a', height: '71%', width: '100%' }} />
+          <div style={{ height: '29%' }}>
+            <Button
+              variant="text"
+              sx={{ color: "black", fontSize: '2.5vh', width: '10%' }}
+              onClick={(e) => handleSelectCatagory(e)}>
+              Catagories
+            </Button>
+            <Menu
+              anchorEl={anchorCatagories}
+              open={viewCatagories}
+              onClose={handleCloseCatagory}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button',
+              }}
+            >
+              {productCatagories().map((value, index) => {
+                return (
+                  <MenuItem onClick={() => {
+                    handleCloseCatagory()
+                    dispatch(updateFilteredCatagories(value.productCategory))
+                    props.displayFilterPage()
+                  }}>{value.productCategory}</MenuItem>
+                )
+              })}
+            </Menu>
+            <Button variant="text" sx={{ color: "black", fontSize: '2.5vh' }}>Gift packeges</Button>
+            <Button variant="text" sx={{ color: "black", fontSize: '2.5vh' }} onClick={() => props.aboutUs()}>About Us</Button>
+            <Button variant="text" sx={{ color: "black", fontSize: '2.5vh' }}>Contact Us</Button>
+            <Button variant="text" sx={{ color: "black", fontSize: '2.5vh' }} onClick={() => {
+              dispatch(goToCart(box));
+              props.displayShoppingCart()
+            }}>Shopping Cart</Button>
+            <Button
+              variant="text"
+              sx={{ color: "black", fontSize: '2.5vh', float: 'right' }}
+              onClick={handleSelectAccounts}
+            >Accounts</Button>
+            <Menu
+              anchorEl={anchorAccounts}
+              open={viewAccounts}
+              onClose={handleCloseAccount}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button',
+              }}
+            >
+              {!props.userLoggedIn && (
+                <MenuItem onClick={() => {
+                  handleLoginMenuDialog()
+                }}>Login</MenuItem>)}
+              {props.userLoggedIn && (
+                <><MenuItem onClick={() => {
+                  console.log("History")
+                }}>History</MenuItem><MenuItem onClick={() => {
+                  console.log("Shopping Cart")
+                  dispatch(goToCart(box))
+                  props.displayShoppingCart()
+                }}>Shopping Cart</MenuItem>
+                </>)
+              }
+            </Menu>
+          </div>
+        </div>
       <Autocomplete
         open={openFilter}
         options={products.map((option) => option.productName)}
         filterOptions={((options, state) => {
-          console.log(options.filter((filtered) => String(filtered.includes(state.inputValue))))
-
           return options.filter((filtered) => filtered.includes(state.inputValue))
         })}
         onInputChange={(_, value) => {
@@ -174,81 +296,83 @@ const FilteredItems = (props: Props) => {
             }}
           />}
       />
-      <Typography variant="h3" color="text.secondary" sx={{ paddingTop: '30px', paddingBottom: '15px' }}>
-        Filtered Items
-      </Typography>
-      <div ref={ourRef} onMouseDown={handleDragStart} onMouseUp={handleDragEnd} onMouseMove={handleDrag} className={"" + "flex overflow-x-scroll"}>
-        <Grid id='Grid1' container wrap='nowrap' sx={{ overflowX: 'hidden' }} spacing={2}>
-          {getDisplayFilteredItems().map((value, index) =>
+      <div style={{ paddingLeft: "2.00%", paddingTop: "2.00%" }}>
+        <Typography variant="h3" color="text.secondary" sx={{ paddingTop: '30px', paddingBottom: '15px' }}>
+          Filtered Items
+        </Typography>
+        <div ref={ourRef} onMouseDown={handleDragStart} onMouseUp={handleDragEnd} onMouseMove={handleDrag} className={"" + "flex overflow-x-scroll"}>
+          <Grid id='Grid1' container wrap='nowrap' sx={{ overflowX: 'hidden' }} spacing={2}>
+            {getDisplayFilteredItems().map((value, index) =>
+            (
+              <Grid item xs={2} sx={{ paddingBottom: '1.00%' }}>
+                <ProductImage
+                  productItem={value}
+                  productImage={images[index].image}
+                  productIndex={index}
+                  openProductDialog={(productId: number) => {
+                    handleproductID(productId);
+                    handleProductDialog();
+                    setIsMouseDownLong(false)
+                  }}
+                />
+                <Button variant='outlined' sx={{ width: '100%' }} onClick={() => {
+                  handleproductID(value.productId)
+                  handleProductDialog()
+                }}>Add To Cart</Button>
+              </Grid>
+            )
+            )}
+          </Grid>
+        </div>
+        <Typography variant="h3" color="text.secondary" sx={{ paddingTop: '10px', paddingBottom: '15px' }}>
+          Specials
+        </Typography>
+        <Grid container wrap='nowrap' sx={{ overflowY: "auto", overflowX: 'hidden', overflow: 'scroll' }} spacing={2}>
+          <Grid item xs={1} />
+          {products.map((value, index) =>
           (
             <Grid item xs={2} sx={{ paddingBottom: '1.00%' }}>
               <ProductImage
                 productItem={value}
-                productImage={images[index].image}
                 productIndex={index}
+                productImage={images[index].image}
+                openProductDialog={(productId: number) => {
+                  if (!isMouseDownLong) {
+                    handleproductID(productId);
+                    handleProductDialog();
+                  }
+                }}
+              />
+            </Grid>
+          )
+          )}
+          <Grid item xs={1} />
+        </Grid>
+        <br />
+        <br />
+        <Typography variant="h3" color="text.secondary">
+          Seasonal Items
+        </Typography>
+        <br />
+        <br />
+        <Grid container spacing={{ xs: 4, md: 4 }} columns={{ xs: 6, sm: 8, md: 12 }} >
+          {products.map((value, index) =>
+          (
+            <Grid item xs={2} sx={{ paddingBottom: '1.00%' }}>
+              <ProductImage
+                productItem={value}
+                productIndex={index}
+                productImage={images[index].image}
                 openProductDialog={(productId: number) => {
                   handleproductID(productId);
                   handleProductDialog();
-                  setIsMouseDownLong(false)
                 }}
               />
-              <Button variant='outlined' sx={{ width: '100%' }} onClick={() => {
-                handleproductID(value.productId)
-                handleProductDialog()
-              }}>Add To Cart</Button>
             </Grid>
           )
           )}
         </Grid>
       </div>
-      <Typography variant="h3" color="text.secondary" sx={{ paddingTop: '10px', paddingBottom: '15px' }}>
-        Specials
-      </Typography>
-      <Grid container wrap='nowrap' sx={{ overflowY: "auto", overflowX: 'hidden', overflow: 'scroll' }} spacing={2}>
-        <Grid item xs={1} />
-        {products.map((value, index) =>
-        (
-          <Grid item xs={2} sx={{ paddingBottom: '1.00%' }}>
-            <ProductImage
-              productItem={value}
-              productIndex={index}
-              productImage={images[index].image}
-              openProductDialog={(productId: number) => {
-                if (!isMouseDownLong) {
-                  handleproductID(productId);
-                  handleProductDialog();
-                }
-              }}
-            />
-          </Grid>
-        )
-        )}
-        <Grid item xs={1} />
-      </Grid>
-      <br />
-      <br />
-      <Typography variant="h3" color="text.secondary">
-        Seasonal Items
-      </Typography>
-      <br />
-      <br />
-      <Grid container spacing={{ xs: 4, md: 4 }} columns={{ xs: 6, sm: 8, md: 12 }} >
-        {products.map((value, index) =>
-        (
-          <Grid item xs={2} sx={{ paddingBottom: '1.00%' }}>
-            <ProductImage
-              productItem={value}
-              productIndex={index}
-              productImage={images[index].image}
-              openProductDialog={(productId: number) => {
-                handleproductID(productId);
-                handleProductDialog();
-              }}
-            />
-          </Grid>
-        )
-        )}
-      </Grid>
     </div>
   )
 }

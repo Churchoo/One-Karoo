@@ -78,11 +78,13 @@ const App: React.FC = () => {
 
   if (filterItemsPage) {
     return (
-        <FilteredItems
-          homepage={() => displayHomePage()}
-          displayShoppingCart={() => displayShoppingCart}
-          aboutUs={() => displayAboutUs}
-        />
+      <FilteredItems
+        userLoggedIn={loggedIn}
+        homepage={() => displayHomePage()}
+        displayShoppingCart={() => displayShoppingCart}
+        aboutUs={() => displayAboutUs}
+        displayFilterPage={() => displayFilterPage()}
+      />
     )
   }
 
@@ -96,10 +98,10 @@ const App: React.FC = () => {
       //   backgroundPosition: 'center',
       //   overflow: 'hidden'
       // }}>
-        <DeliveryDetails
-          homepage={() => displayHomePage()}
-          aboutUs={() => displayAboutUs()}
-        />
+      <DeliveryDetails
+        homepage={() => displayHomePage()}
+        aboutUs={() => displayAboutUs()}
+      />
       //</div>
     )
   }
@@ -113,12 +115,12 @@ const App: React.FC = () => {
       //   backgroundPosition: 'center',
       //   overflow: 'hidden'
       // }}>
-        <ShoppingCart
-          shoppingCartItems={shoppingCartItems}
-          homepage={() => displayHomePage()}
-          deliveryPage={() => displayDeliveryDetails()}
-          aboutUs={() => displayAboutUs()}
-        />
+      <ShoppingCart
+        shoppingCartItems={shoppingCartItems}
+        homepage={() => displayHomePage()}
+        deliveryPage={() => displayDeliveryDetails()}
+        aboutUs={() => displayAboutUs()}
+      />
       //</div>
     )
   }
@@ -131,13 +133,13 @@ const App: React.FC = () => {
     //   backgroundPosition: 'center',
     //   overflow: 'hidden'
     // }}>
-      <Homepage
-        userLoggedIn={loggedIn}
-        displayFilterPage={() => displayFilterPage()}
-        displayShoppingCart={() => displayShoppingCart()}
-        aboutUs={() => displayAboutUs()}
-        login={() => setLogin()}
-      />
+    <Homepage
+      userLoggedIn={loggedIn}
+      displayFilterPage={() => displayFilterPage()}
+      displayShoppingCart={() => displayShoppingCart()}
+      aboutUs={() => displayAboutUs()}
+      login={() => setLogin()}
+    />
     //</div>
   );
 }

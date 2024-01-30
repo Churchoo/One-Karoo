@@ -70,15 +70,15 @@ const images: { image: any }[] = [{ image: Image1 }, { image: Image2 }, { image:
 const Homepage = (props: Props) => {
   const dispatch = useAppDispatch()
 
-  const [anchorCatagories, setAnchorCatagories] = React.useState<null | HTMLElement>(null);
-  const [anchorAccounts, setAnchorAccounts] = React.useState<null | HTMLElement>(null);
+  const [anchorCatagories, setAnchorCatagories] = React.useState<null | HTMLElement>(null)
+  const [anchorAccounts, setAnchorAccounts] = React.useState<null | HTMLElement>(null)
   const [productDialogOpen, setProductDialogOpen] = useState(false)
   const [loginMenuDialogOpen, setLoginMenuDialogOpen] = useState(false)
   const [createAccountDialogOpen, setCreateAccountDialogOpen] = useState(false)
   const [loginAccountDialogOpen, setLoginAccountDialogOpen] = useState(false)
   const [productID, setProductID] = useState(0)
-  const [isMouseDownLong, setIsMouseDownLong] = useState(false);
-  const [filterItems, setFilterItems] = useState<string>("");
+  const [isMouseDownLong, setIsMouseDownLong] = useState(false)
+  const [filterItems, setFilterItems] = useState<string>("")
   const [openFilter, setOpenFilter] = useState(false)
   const [viewCatagories, setViewCatagories] = useState(false)
   const [viewAccounts, setViewAccounts] = useState(false)
@@ -270,17 +270,18 @@ const Homepage = (props: Props) => {
         )}
         <div style={{ height: '19vh', width: '100%' }}>
           <img
-          src={`${Logo}`}
-          style={{ top: 0, left: 0, height: '100%', float: 'left', justifySelf: 'start'}}
-          alt=''
-        />
+            src={`${Logo}`}
+            style={{ top: 0, left: 0, height: '100%', float: 'left', justifySelf: 'start' }}
+            alt=''
+          />
           <div style={{ backgroundColor: '#09456a', height: '71%', width: '100%' }} />
-          <div style={{ height: '29%'}}>
+          <div style={{ height: '29%' }}>
             <Button
               variant="text"
               sx={{ color: "black", fontSize: '2.5vh', width: '10%' }}
-              onClick={handleSelectCatagory}
-            >Catagories</Button>
+              onClick={(e) => handleSelectCatagory(e)}>
+              Catagories
+            </Button>
             <Menu
               anchorEl={anchorCatagories}
               open={viewCatagories}
@@ -336,22 +337,18 @@ const Homepage = (props: Props) => {
             </Menu>
           </div>
         </div>
-        <Divider sx={{width: '100%' , height: '0.1vh' , borderColor: '#09456a'}}/>
-        <div style={{ paddingLeft: "10%", paddingRight: '10%', backgroundColor: '#09456a', height: '9vh'}}>
-          <div style={{ height: '1.53vh'}} />
+        <Divider sx={{ width: '100%', height: '0.1vh', borderColor: '#09456a' }} />
+        <div style={{ paddingLeft: "10%", paddingRight: '10%', backgroundColor: '#09456a', height: '9vh' }}>
+          <div style={{ height: '1.53vh' }} />
           <Autocomplete
             open={openFilter}
-            options={products}
+            options={products.map((option) => option.productName)}
             limitTags={5}
             noOptionsText='No Items Found'
-            filterOptions={((options, state) => options.filter((filtered) => filtered.productDescription.includes(state.inputValue)))}
-            groupBy={(option) => option.productCategory}
-            sx={{ backgroundColor: 'white', height: '5.67vh'}}
-            onChange={(event, value) => {
-              if (value !== null)
-                setFilterItems(value.productDescription)
-              setOpenFilter(false)
-            }}
+            filterOptions={((options, state) => {
+              return options.filter((filtered) => filtered.toLowerCase().includes(state.inputValue.toLowerCase()))
+            })}
+            sx={{ backgroundColor: 'white', height: '5.67vh' }}
             onInputChange={(_, value) => {
               dispatch(updateFilter(value))
               if (value.length < 3) {
